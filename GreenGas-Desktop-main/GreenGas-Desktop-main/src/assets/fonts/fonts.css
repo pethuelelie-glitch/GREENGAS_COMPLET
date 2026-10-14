@@ -1,0 +1,5 @@
+/* Polices embarquées : l'application fonctionne hors ligne (aucun appel à Google Fonts). */
+@font-face{font-family:'Inter';font-style:normal;font-display:swap;font-weight:100 900;src:url('./inter-latin-wght-normal.woff2') format('woff2-variations'),url('./inter-latin-wght-normal.woff2') format('woff2')}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-display:swap;font-weight:500;src:url('./jetbrains-mono-latin-500-normal.woff2') format('woff2')}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-display:swap;font-weight:600;src:url('./jetbrains-mono-latin-600-normal.woff2') format('woff2')}
+/* Georgia (titres) est une police système de Windows : rien à embarquer. */

@@ -1,0 +1,33 @@
+/// Système de design GreenGas (jetons et composants), voir docs/DESIGN_TOKENS.md.
+library;
+
+export 'animated_number.dart';
+export 'app_button.dart';
+export 'app_card.dart';
+export 'app_colors.dart';
+export 'app_sheet.dart';
+export 'app_text_field.dart';
+export 'app_tile.dart';
+export 'arrow_pill_button.dart';
+export 'avatar.dart';
+export 'circle_icon_button.dart';
+export 'code_text.dart';
+export 'display_text.dart';
+export 'floating_dock.dart';
+export 'icon_bubble.dart';
+export 'kpi_card.dart';
+export 'notice_banner.dart';
+export 'page_scaffold.dart';
+export 'progress_bar.dart';
+export 'pressable.dart';
+export 'pulse_ring.dart';
+export 'reveal.dart';
+export 'section_header.dart';
+export 'segmented_choice.dart';
+export 'skeleton.dart';
+export 'states.dart';
+export 'status_pill.dart';
+export 'tab_switcher.dart';
+export 'toast.dart';
+export 'tokens.dart';
+export 'typography.dart';

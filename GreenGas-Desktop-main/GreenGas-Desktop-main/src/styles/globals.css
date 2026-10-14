@@ -1,0 +1,128 @@
+@import '../assets/fonts/fonts.css';
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-fond-cadre font-sans text-texte antialiased;
+    font-size: 14px;
+    line-height: 1.45;
+    font-variant-numeric: tabular-nums;
+    overflow: hidden;
+  }
+  :focus-visible {
+    outline: 3px solid var(--or);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--vert-pale);
+    color: var(--vert-foret-encre);
+  }
+  input[type='number']::-webkit-inner-spin-button {
+    opacity: 0.4;
+  }
+}
+
+/* Projection 1920 × 1080 : la mise en page conçue en 1440 × 900 est agrandie proportionnellement. */
+@media (min-width: 1800px) and (min-height: 1000px) {
+  html {
+    zoom: 1.25;
+  }
+  /* Radix place les bulles en coordonnées non zoomées : on annule le zoom sur leur conteneur,
+     puis on le rétablit sur le contenu pour garder la même taille de texte. */
+  [data-radix-popper-content-wrapper] {
+    zoom: 0.8;
+  }
+  [data-radix-popper-content-wrapper] > * {
+    zoom: 1.25;
+  }
+}
+
+@layer components {
+  /* Défilement discret et cohérent dans tout le logiciel */
+  .defilement {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bordure) transparent;
+  }
+  .chiffres {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Squelette de chargement : un reflet traverse le bloc (transform uniquement). */
+  .squelette {
+    @apply relative overflow-hidden rounded-lg bg-vert-pale;
+  }
+  .squelette::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, var(--surface), transparent);
+    opacity: 0.7;
+    animation: miroitement 1.4s ease-in-out infinite;
+  }
+  @keyframes miroitement {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
+
+/* Impression du QR code d'un bac : seule la zone marquée est imprimée. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .zone-impression,
+  .zone-impression * {
+    visibility: visible;
+  }
+  .zone-impression {
+    position: fixed;
+    inset: 0;
+    justify-content: center;
+    transform: scale(1.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Carte de la vue globale (Leaflet) : zoom sous le choix du fond, sources au-dessus du bas de page. */
+.carte-vue-globale {
+  font-family: inherit;
+}
+.carte-vue-globale .leaflet-top.leaflet-right {
+  top: 96px;
+  right: 4px;
+}
+.carte-vue-globale .leaflet-bottom.leaflet-left {
+  left: 4px;
+}
+.carte-vue-globale .leaflet-control-attribution {
+  border-radius: 6px 6px 0 0;
+  font-size: 10px;
+}
+
+/* Même effet quand l'utilisateur choisit « Animations réduites » dans ses préférences. */
+:root[data-mouvement='reduit'] *,
+:root[data-mouvement='reduit'] *::before,
+:root[data-mouvement='reduit'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}

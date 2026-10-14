@@ -1,0 +1,136 @@
+/*
+ * Jetons GREENGAS — seul endroit où les couleurs sont écrites en dur.
+ * Ils sont branchés dans tailwind.config.ts (classes bg-vert-foret, text-statut-alerte…)
+ * et lus par les graphiques via src/lib/couleurs.ts.
+ */
+:root {
+  /* Identité (CLAUDE.md §6) */
+  --vert-foret: #1b4332;
+  --vert-foret-survol: #24563f;
+  /* Vert forêt employé comme texte ou contour (identique en thème clair, éclairci en thème sombre) */
+  --vert-foret-encre: #1b4332;
+  --vert: #2e7d32;
+  --vert-pale: #edf3ec;
+  --or: #b8860b;
+  --or-pale: #fbf3dc;
+  --or-texte: #6e5005;
+  --fond: #f6f7f4;
+  --fond-cadre: #e4e8e0;
+  --surface: #ffffff;
+  --texte: #222222;
+  --texte-doux: #5c5c5c;
+  --bordure: #d9ded6;
+  --encre-claire: #cfe3d4;
+
+  /* Statuts : toujours accompagnés d'une icône ou d'un texte */
+  --statut-ok: #2e7d32;
+  --statut-ok-fond: #e3f1e4;
+  --statut-ok-texte: #1f6b25;
+  --statut-alerte: #c0392b;
+  --statut-alerte-fond: #fbe5e2;
+  --statut-alerte-texte: #a52a1e;
+  --statut-attention: #d68910;
+  --statut-attention-fond: #fbf0dc;
+  --statut-attention-texte: #8a5a07;
+  --statut-neutre: #7f8c8d;
+  --statut-neutre-fond: #eceeec;
+  --statut-neutre-texte: #4d5a53;
+
+  /* Catégories de tri (palette distincte des statuts) */
+  --cat-organique: #2e7d32;
+  --cat-biomasse: #8baa4a;
+  --cat-plastique: #3b7ea1;
+  --cat-metal: #5b6770;
+  --cat-carton-papier: #b8860b;
+  --cat-verre: #7fb7b0;
+  --cat-refus: #b9bfb6;
+
+  /* Séries des graphiques (sites, secteurs, rôles) */
+  --serie-1: #1b4332;
+  --serie-2: #3b7ea1;
+  --serie-3: #8baa4a;
+  --serie-4: #b8860b;
+  --serie-5: #7fb7b0;
+  --serie-6: #5b6770;
+  --serie-7: #2e7d32;
+
+  /* Fond de carte stylisé d'Abidjan */
+  --carte-terre: #e3ebdc;
+  --carte-terre-2: #dbe6d2;
+  --carte-parc: #cfe0c4;
+  --carte-lagune: #b5d6d4;
+  --carte-mer: #a7cfd2;
+  --carte-route: #ffffff;
+  --carte-quartier: #71836f;
+
+  /* Infobulle sombre de la carte */
+  --bulle: #222222;
+  --bulle-texte: #ffffff;
+
+  /* Ombres */
+  --ombre-carte: 0 1px 10px rgb(0 0 0 / 0.12);
+  --ombre-flottante: 0 2px 12px rgb(0 0 0 / 0.16);
+  --ombre-puce: 0 1px 6px rgb(0 0 0 / 0.18);
+  --ombre-modale: 0 24px 60px rgb(0 0 0 / 0.28);
+  --voile: rgb(0 0 0 / 0.5);
+}
+
+/*
+ * Thème sombre (Paramètres → préférences personnelles). Mêmes jetons, valeurs adaptées à un fond sombre ;
+ * le thème clair ci-dessus reste la référence de la maquette.
+ */
+:root[data-theme='sombre'] {
+  color-scheme: dark;
+
+  --vert-foret: #1b4332;
+  --vert-foret-survol: #24563f;
+  --vert-foret-encre: #8fd0a6;
+  --vert: #5cb860;
+  --vert-pale: #1f2d25;
+  --or: #d4a42a;
+  --or-pale: #3a3013;
+  --or-texte: #ebc764;
+  --fond: #121a15;
+  --fond-cadre: #0b110d;
+  --surface: #19231d;
+  --texte: #e4ebe5;
+  --texte-doux: #a2b2a7;
+  --bordure: #2f3e35;
+  --encre-claire: #cfe3d4;
+
+  --statut-ok: #5cb860;
+  --statut-ok-fond: #1d3324;
+  --statut-ok-texte: #95d69d;
+  --statut-alerte: #e05a4b;
+  --statut-alerte-fond: #3e201c;
+  --statut-alerte-texte: #f4a69b;
+  --statut-attention: #e3a03a;
+  --statut-attention-fond: #3a2c14;
+  --statut-attention-texte: #f0c47c;
+  --statut-neutre: #95a3a4;
+  --statut-neutre-fond: #252e29;
+  --statut-neutre-texte: #bcc7c0;
+
+  --cat-metal: #8d9ba5;
+  --cat-refus: #8e968b;
+
+  --serie-1: #6fbf8e;
+  --serie-6: #8d9ba5;
+
+  --carte-terre: #1c2821;
+  --carte-terre-2: #212e27;
+  --carte-parc: #243a2c;
+  --carte-lagune: #1f3c45;
+  --carte-mer: #1b3640;
+  --carte-route: #3a4a40;
+  --carte-quartier: #93a898;
+
+  --bulle: #0b0f0c;
+  --bulle-texte: #ffffff;
+
+  --ombre-carte: 0 1px 12px rgb(0 0 0 / 0.45);
+  --ombre-flottante: 0 2px 14px rgb(0 0 0 / 0.5);
+  --ombre-puce: 0 1px 8px rgb(0 0 0 / 0.5);
+  --ombre-modale: 0 24px 60px rgb(0 0 0 / 0.6);
+  --voile: rgb(0 0 0 / 0.65);
+}

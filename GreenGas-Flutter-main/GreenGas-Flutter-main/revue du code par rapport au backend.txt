@@ -1,0 +1,125 @@
+# Revue de l'app Flutter — éléments à revoir
+
+Projet : `GreenGas-Flutter-feature-carla` · Référence : contrat **openapi 1.1.0**, Guide commun du 13/10, **seed v1.1**
+
+**Bilan :** l'app respecte bien le contrat (routes, champs, énumérations, erreurs, JWT, rôles, QR, pesée, aucun calcul côté app). Le mode sans serveur fonctionne. Les points ci-dessous servent à ce que le branchement sur le vrai backend et la démo se passent sans surprise.
+
+> Cette revue a été faite par lecture du code : Flutter n'a pas pu être installé dans l'environnement de revue. Avant de commencer, lancez `flutter analyze` et `flutter test`.
+
+---
+
+## 🔴 Bloquant pour la démo sur le vrai backend
+
+### 1. Utiliser la date de travail au lieu de la date du téléphone
+
+- **Problème :** `todayIso()` (`lib/data/providers.dart`) prend `DateTime.now()`. Toutes les données du seed sont datées du **12/09/2026**, donc le collecteur ne verra aucune tournée du jour.
+- **À faire :**
+  - Ajouter `--dart-define=DATE_TRAVAIL=2026-09-12` dans `AppConfig` (même valeur que `GREENGAS_DATE_TRAVAIL` côté backend et `VITE_DATE_DEMO` côté Control Center).
+  - Sans ce réglage, garder la date du jour.
+  - L'utiliser dans `tourneesDuJourProvider` et `prochainesTourneesProvider`.
+
+### 2. Une tournée planifiée pour la démo du collecteur ⚠️ à décider avec Bonfils et le backend
+
+- **Problème :** dans le seed v1.1, TRN-0912-01 et TRN-0912-02 sont déjà **collectées**. Aucune tournée n'est `planifiee`, donc on ne peut pas montrer « démarrer → scanner → pesée → valider → clôturer ».
+- **Proposition :** ajouter au seed une tournée planifiée le 12/09 (par exemple TRN-0912-03, secteur OUEST, BAC-031, collecteur Kouadio).
+- **Ne pas modifier le seed vous-mêmes :** il est partagé avec le backend et le Control Center.
+
+---
+
+## 🟠 Important
+
+### 3. Aligner le faux backend sur `seed_v1.1.json`
+
+`FakeApiClient` invente ses propres données. Les téléphones et le mot de passe sont bons, mais le reste diffère du seed :
+
+| Élément | Flutter (mock) | Seed v1.1 |
+|---|---|---|
+| UUID des citoyens | `…000000000011` à `…015` | `…000000000101` à `…105` |
+| UUID des récompenses | `ec000000-…` | `7ec00000-…` |
+| Noms des récompenses | « Crédit d'appel », « Bon d'achat », « Kit de tri » | « Crédit d'appel 500 FCFA », « Bon d'achat 1 000 FCFA », « Kit de tri GreenGas » |
+| Nom de l'admin | Admin Démo | Administrateur GreenGas |
+| Position des bacs | Autour d'Angré (5,4005 ; −3,989) | BAC-014 : 5,3612 ; −3,9905, etc. |
+| Secteurs | Tous les bacs dans NORD | NORD / EST / OUEST |
+| Tournées | Une `planifiee` aujourd'hui et une dans 4 jours | TRN-0912-01 et 02 `collectee` le 12/09, plus l'historique |
+| Points d'Awa | 130 de solde | 399 crédités, 38 scans |
+
+**À faire :**
+- Mettre `seed_v1.1.json` dans les assets.
+- Faire lire ce fichier par `FakeApiClient` au lieu de `_seed()`, en gardant le même état à la même date de travail.
+- Adapter les tests qui dépendent des anciennes valeurs.
+
+### 4. Ajouts hors contrat ⚠️ à décider avec Bonfils et le backend
+
+Ces champs et cette route sont utilisés par l'app mais **absents de l'openapi 1.1.0**. Avec le vrai backend :
+
+| Ajout | Ce qui se passera |
+|---|---|
+| `GET /bacs/proches/` (public) | Erreur 404 : la carte de choix du bac ne marchera pas. Il ne restera que le scan du QR. |
+| `email` à l'inscription | Le serveur l'ignorera sans rien dire. |
+| `Recompense.categorie` | Absent : l'app devinera la catégorie depuis le nom. Ça fonctionne, mais c'est fragile. |
+| `telephone_beneficiaire` sur `POST /echanges/` | Le serveur l'ignorera sans rien dire : le forfait n'ira pas au numéro choisi. |
+
+- **À faire :** soit on les ajoute au contrat (version 1.2.0) avant le 1er novembre, soit on les retire de l'app.
+- **En attendant :** l'app doit gérer proprement l'absence de `/bacs/proches/` (erreur 404 → proposer directement le scan du QR).
+
+### 5. Le GPS pendant la présentation
+
+- **Problème :** le serveur refuse un scan à plus de 100 m du bac (`hors_zone`, ne compte pas). Dans la salle du jury, le vrai GPS sera loin des bacs du seed.
+- **À prévoir avec le backend**, au choix :
+  - un bac de démo placé à l'adresse de la salle ;
+  - un réglage du rayon de distance ;
+  - un scan sans position (`non_localise`, compte quand même).
+
+### 6. Rafraîchir le solde du citoyen
+
+- **Problème :** après le tri validé dans le Control Center, les points d'Awa n'apparaissent pas tant qu'on ne recharge pas l'écran.
+- **À faire :**
+  - Rafraîchir `soldeProvider` toutes les 5 s quand l'écran est visible, comme le Control Center.
+  - Ajouter un « tirer pour rafraîchir » (`RefreshIndicator`) sur le solde, l'historique et la boutique.
+
+---
+
+## 🟡 À compléter
+
+7. **Détail des gains.** `GET /greenpoints/transactions/` est prévu par le guide pour le citoyen, mais aucun repository ni écran ne l'utilise. Il faut au minimum la liste : tournée, points, statut, date.
+8. **Tests du client HTTP réel.** Ajouter des tests de `HttpApiClient` avec `MockClient` (package `http/testing`) :
+   - en-tête `Bearer` envoyé ;
+   - erreur 401 → un seul rafraîchissement puis nouvel essai ;
+   - échec du rafraîchissement → session effacée et retour à la connexion ;
+   - lecture de `{code, message, details}` ;
+   - réponse 204 vide.
+9. **Session après un nouvel essai.** Si la requête rejouée après le rafraîchissement renvoie encore 401, l'app lève l'erreur mais ne ramène pas à la connexion. Dans ce cas, appeler aussi `tokens.clear()` et `onSessionExpired`.
+10. **Requêtes sans filtre.** `Uri.replace(queryParameters: {})` ajoute un `?` vide en fin d'URL. Il faut passer `null` quand la map est vide. C'est sans gravité, mais plus propre.
+11. **Dossiers Android et iOS.** Ils ne sont pas dans le dépôt. Vérifier que `scripts/bootstrap.sh` fonctionne aussi sous Windows (Git Bash) ou documenter la procédure, et mettre `minSdk = 23`.
+
+---
+
+## 🔵 Mise à jour des documents
+
+12. Remplacer `docs/contrat/openapi.yaml` (1.0.0) et `docs/contrat/GREENGAS_Guide_Commun.md` par les versions actuelles : **openapi 1.1.0** et le Guide du 13/10. La seule nouveauté de la 1.1.0, `POST /auth/inscription/personnel/`, ne concerne pas Flutter.
+13. Ajouter `seed_v1.1.json` dans `docs/contrat/`, comme référence.
+14. Mettre à jour `docs/PROPOSITIONS_CONTRAT.md` et `BACKLOG.md` selon les décisions des points 2 et 4.
+
+---
+
+## ✅ Déjà conforme, ne pas toucher
+
+- Routes avec barre finale, base `/api/v1`, pagination `page` / `taille_page`.
+- Noms des champs et énumérations identiques au contrat. Une valeur inconnue est signalée.
+- Erreurs `{code, message, details}` affichées telles quelles, détail `VALIDATION` par champ.
+- JWT : un seul rafraîchissement sur 401. Jetons chiffrés (`flutter_secure_storage`).
+- Aiguillage par `role` : citoyen, collecteur, sinon « Utilisez le Control Center ». L'inscription crée seulement des citoyens.
+- QR = code du bac seul (`BAC-0xx`). Un scan sans GPS part sans position.
+- Pesée vérifiée chaque seconde (`GET /collectes/{id}/`). Le collecteur ne saisit aucun poids.
+- Aucun calcul métier dans l'app.
+- Les mentions « mode démonstration » n'apparaissent qu'en mode sans serveur.
+
+## Pour vérifier après les corrections
+
+Avec `USE_MOCK=true`, puis avec le vrai backend chargé du seed v1.1 et `DATE_TRAVAIL=2026-09-12` :
+
+1. Connexion d'Awa (`+2250701020304` / `greengas2026`) : le solde est le même dans les deux modes.
+2. Connexion de Fatou (`+2250701020308`) : scan refusé avec `COMPTE_NON_VALIDE`.
+3. Connexion de Kouadio (`+2250700000002`) : la tournée planifiée du 12/09 apparaît, puis démarrer → scanner → pesée → valider → clôturer.
+4. Tri de TRN-0912-01 dans le Control Center : Awa reçoit **+105 points** et les voit sans relancer l'app.
+5. Opérateur (`+2250700000003`) : l'écran « Utilisez le Control Center » s'affiche.

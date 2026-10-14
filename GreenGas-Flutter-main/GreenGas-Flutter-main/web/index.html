@@ -1,0 +1,150 @@
+<!DOCTYPE html><html><head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="greengas">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <title>greengas</title>
+  <link rel="manifest" href="manifest.json">
+  <style id="splash-screen-style">
+    html {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      background-color: #1B4332;
+          background-size: 100% 100%;
+    }
+
+    .center {
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
+
+    .contain {
+      display:block;
+      width:100%; height:100%;
+      object-fit: contain;
+    }
+
+    .stretch {
+      display:block;
+      width:100%; height:100%;
+    }
+
+    .cover {
+      display:block;
+      width:100%; height:100%;
+      object-fit: cover;
+    }
+
+    .bottom {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      -ms-transform: translate(-50%, 0);
+      transform: translate(-50%, 0);
+    }
+
+    .bottomLeft {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+
+    .bottomRight {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #1B4332;
+          }
+    }
+  </style>
+  <script id="splash-screen-script">
+    function removeSplashFromWeb() {
+      document.getElementById("splash")?.remove();
+      document.getElementById("splash-branding")?.remove();
+      document.body.style.background = "transparent";
+    }
+  </script>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+  <script id="browser-languages-fix">
+    // Au démarrage, le moteur web de Flutter crée un Intl.Locale pour chaque langue du navigateur
+    // (navigator.languages). Une seule étiquette invalide (« en_US », « C »…) lève
+    // « RangeError: Incorrect locale information provided » et l'app reste bloquée sur le splash.
+    // On ne garde donc que des étiquettes valides, corrigées si possible, avec le français en secours.
+    (function () {
+      if (typeof Intl === "undefined" || typeof Intl.Locale !== "function") return;
+      var source = navigator.languages || [navigator.language];
+      var valid = [];
+      for (var i = 0; i < source.length; i++) {
+        var tag = String(source[i] || "").split(/[.@]/)[0].replace(/_/g, "-");
+        try {
+          var locale = new Intl.Locale(tag).toString();
+          if (valid.indexOf(locale) < 0) valid.push(locale);
+        } catch (e) {
+          // étiquette inutilisable : ignorée
+        }
+      }
+      if (valid.length === source.length && valid.every(function (l, j) { return l === source[j]; })) return;
+      if (valid.length === 0) valid = ["fr"];
+      try {
+        Object.defineProperty(navigator, "languages", { get: function () { return valid; }, configurable: true });
+        Object.defineProperty(navigator, "language", { get: function () { return valid[0]; }, configurable: true });
+      } catch (e) {
+        // propriété non redéfinissable : on laisse le navigateur tel quel
+      }
+    })();
+  </script>
+</head>
+<body>
+  <picture id="splash">
+      <source srcset="splash/img/light-1x.png 1x, splash/img/light-2x.png 2x, splash/img/light-3x.png 3x, splash/img/light-4x.png 4x" media="(prefers-color-scheme: light)">
+      <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x, splash/img/dark-4x.png 4x" media="(prefers-color-scheme: dark)">
+      <img class="center" aria-hidden="true" src="splash/img/light-1x.png" alt="">
+  </picture>
+  <!--
+    You can customize the "flutter_bootstrap.js" script.
+    This is useful to provide a custom configuration to the Flutter loader
+    or to give the user feedback during the initialization process.
+
+    For more details:
+    * https://docs.flutter.dev/platform-integration/web/initialization
+  -->
+  <script src="flutter_bootstrap.js" async=""></script>
+
+
+</body></html>

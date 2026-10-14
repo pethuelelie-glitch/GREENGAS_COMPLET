@@ -1,0 +1,44 @@
+# Dépendances
+node_modules/
+
+# Builds (web, Electron, installateurs)
+dist/
+dist-electron/
+release/
+*.tsbuildinfo
+
+# Variables d'environnement locales (seul .env.example est partagé)
+.env
+.env.*
+!.env.example
+
+# Tests et rapports
+coverage/
+test-results/
+playwright-report/
+.vitest/
+
+# Caches d'outils
+.eslintcache
+.cache/
+.vite/
+*.tgz
+
+# Journaux
+*.log
+npm-debug.log*
+
+# Éditeurs (seuls les réglages communs de VS Code sont partagés)
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# Systèmes
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Requêtes de travail pour Claude Code (jamais versionnées)
+PROMPT_*.md
