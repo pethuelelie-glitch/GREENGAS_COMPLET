@@ -5,6 +5,7 @@ from .referentiel_views import (
     SecteurDetailUpdateView,
     BacListCreateView,
     BacDetailUpdateView,
+    BacsProchesView,
 )
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     'SecteurDetailUpdateView',
     'BacListCreateView',
     'BacDetailUpdateView',
+    'BacsProchesView',
 ]

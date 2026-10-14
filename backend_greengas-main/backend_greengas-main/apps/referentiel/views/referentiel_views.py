@@ -1,8 +1,47 @@
-from rest_framework import generics
+from math import asin, cos, radians, sin, sqrt
+
+from rest_framework import generics, serializers
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from apps.referentiel.models import Site, Secteur, Bac
 from apps.referentiel.serializers import SiteSerializer, SecteurSerializer, BacSerializer
 from apps.comptes.permissions import EstAdmin, EstAdminOuResponsable
+
+
+class BacsProchesView(APIView):
+    """GET /api/v1/bacs/proches/ — bacs actifs, sans données sensibles."""
+    permission_classes = []
+
+    def get(self, request):
+        try:
+            latitude = float(request.query_params['latitude'])
+            longitude = float(request.query_params['longitude'])
+            if not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
+                raise ValueError
+        except (KeyError, TypeError, ValueError):
+            raise serializers.ValidationError({
+                'latitude': 'Latitude et longitude valides sont requises.'
+            })
+
+        def distance(bac):
+            lat1, lat2 = radians(latitude), radians(float(bac.latitude))
+            dlat = lat2 - lat1
+            dlon = radians(float(bac.longitude) - longitude)
+            h = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+            return 6_371_000 * 2 * asin(sqrt(h))
+
+        bacs = sorted(Bac.objects.filter(statut='actif'), key=distance)[:8]
+        return Response([
+            {
+                'code': bac.code,
+                'residence': bac.residence,
+                'latitude': bac.latitude,
+                'longitude': bac.longitude,
+                'distance_m': round(distance(bac), 1),
+            }
+            for bac in bacs
+        ])
 
 
 class SiteListView(generics.ListAPIView):

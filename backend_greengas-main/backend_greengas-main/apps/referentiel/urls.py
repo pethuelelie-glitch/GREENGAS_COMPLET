@@ -6,9 +6,11 @@ from apps.referentiel.views import (
     SecteurDetailUpdateView,
     BacListCreateView,
     BacDetailUpdateView,
+    BacsProchesView,
 )
 
 urlpatterns = [
+    path('bacs/proches/', BacsProchesView.as_view(), name='bacs_proches'),
     # Sites (/api/v1/sites/...)
     path('sites/', SiteListView.as_view(), name='sites_list'),
     path('sites/<uuid:id>/', SiteDetailUpdateView.as_view(), name='sites_detail'),
