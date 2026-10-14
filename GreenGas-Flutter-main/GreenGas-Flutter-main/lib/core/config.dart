@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
+
 /// Configuration de l'application. Les valeurs réseau se règlent à l'exécution :
 ///
-///   flutter run                                  -> mode démo (données fictives, sans serveur)
+///   flutter run                                  -> backend Django local
 ///   flutter run --dart-define=USE_MOCK=false \
 ///               --dart-define=API_BASE_URL=http://192.168.1.20:8000/api/v1
 ///
@@ -8,15 +10,15 @@
 class AppConfig {
   const AppConfig._();
 
-  /// URL de l'API. 10.0.2.2 = le PC vu depuis l'émulateur Android.
-  static const String apiBaseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:8000/api/v1',
-  );
+  /// URL de l'API, configurable pour les appareils réels et les environnements distants.
+  static const String _apiBaseUrl = String.fromEnvironment('API_BASE_URL');
+  static final String apiBaseUrl = _apiBaseUrl.isNotEmpty
+      ? _apiBaseUrl
+      : 'http://${kIsWeb || defaultTargetPlatform != TargetPlatform.android ? 'localhost' : '10.0.2.2'}:8000/api/v1';
 
   /// true : l'app utilise FakeApiClient (mêmes formats que l'API, données du guide §12).
   static const bool useMock =
-      bool.fromEnvironment('USE_MOCK', defaultValue: true);
+      bool.fromEnvironment('USE_MOCK', defaultValue: false);
 
   /// Date de travail de la démo (le seed est daté), au format `AAAA-MM-JJ`.
   /// Doit valoir la même chose que `GREENGAS_DATE_TRAVAIL` (backend) et `VITE_DATE_DEMO`

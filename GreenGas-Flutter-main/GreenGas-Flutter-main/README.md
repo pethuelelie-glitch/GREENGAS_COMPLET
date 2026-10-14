@@ -22,7 +22,7 @@ Prérequis : Flutter stable (3.22 ou plus), Android Studio ou Xcode, Python 3.
 ```bash
 git clone <url-du-depot> greengas && cd greengas
 ./scripts/bootstrap.sh     # android/ios, permissions, flutter pub get, format
-flutter run                # mode démo : données fictives, aucun serveur nécessaire
+flutter run                # connexion au backend Django local
 ```
 
 Le scan QR demande un vrai téléphone (caméra). Sur Windows, utilisez WSL ou Git Bash pour le script.
@@ -32,11 +32,13 @@ Si Android se plaint de `minSdk`, mettez `minSdk = 23` dans `android/app/build.g
 
 | Mode | Commande |
 |---|---|
-| Démo (défaut) | `flutter run` |
-| Backend réel | `flutter run --dart-define=USE_MOCK=false --dart-define=API_BASE_URL=http://192.168.1.20:8000/api/v1` |
+| Backend local (défaut) | `flutter run` |
+| Mode démo | `flutter run --dart-define=USE_MOCK=true` |
+| Backend sur un autre hôte | `flutter run --dart-define=API_BASE_URL=http://192.168.1.20:8000/api/v1` |
 
-Pour un téléphone réel, utilisez l'adresse IP de votre PC sur le Wi-Fi et lancez Django avec `runserver 0.0.0.0:8000`
-(émulateur Android : `http://10.0.2.2:8000/api/v1`). Le serveur de maquette Prism du contrat fonctionne aussi
+Pour un téléphone réel, utilisez l'adresse IP de votre PC sur le Wi-Fi et lancez Django avec `runserver 0.0.0.0:8000`.
+L'émulateur Android utilise automatiquement `http://10.0.2.2:8000/api/v1`; le navigateur et les autres plateformes utilisent `localhost`.
+Le serveur de maquette Prism du contrat fonctionne aussi
 (`npx @stoplight/prism-cli mock docs/contrat/openapi.yaml -p 4010`), mais ses réponses sont statiques.
 
 ### Comptes de démo (mot de passe `greengas2026`)
