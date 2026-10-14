@@ -94,7 +94,14 @@ backend_greengas/
 cd backend_greengas
 ```
 
-### 2. Activer l'environnement virtuel
+### 2. Créer et activer l'environnement virtuel
+Depuis le dossier du backend :
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
 Sur Windows (PowerShell) :
 ```powershell
 ..\.venv\Scripts\Activate.ps1
@@ -102,8 +109,10 @@ Sur Windows (PowerShell) :
 
 ### 3. Installer les dépendances
 ```bash
-pip install -r ..\requirements.txt
+pip install -r requirements.txt
 ```
+
+Copiez `.env.example` vers `.env` pour démarrer avec SQLite en développement, puis appliquez les migrations.
 
 ### 4. Appliquer les migrations
 ```bash
