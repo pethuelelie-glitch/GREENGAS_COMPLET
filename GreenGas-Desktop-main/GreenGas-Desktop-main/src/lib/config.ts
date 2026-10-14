@@ -6,7 +6,7 @@ export type ModeApi = 'mock' | 'reel';
 const env = import.meta.env;
 
 function lireMode(valeur: string | undefined): ModeApi {
-  return valeur === 'reel' ? 'reel' : 'mock';
+  return valeur === 'mock' ? 'mock' : 'reel';
 }
 
 const modeApi = lireMode(env.VITE_API_MODE);

@@ -35,7 +35,7 @@ npm run dev
 
 Ouvrez ensuite **<http://localhost:5173>**.
 
-Par défaut, l'application tourne avec un **faux backend** intégré : aucune autre installation n'est nécessaire.
+Par défaut, l'application appelle le backend Django. Pour démarrer celui-ci, configurez son fichier `.env`, installez ses dépendances et lancez les migrations (voir `backend_greengas-main/README.md`). Le faux backend reste disponible avec `VITE_API_MODE=mock`.
 
 ---
 
@@ -71,7 +71,7 @@ Sur le web, la session est gardée en mémoire : recharger la page déconnecte. 
 
 | Variable | Rôle | Valeur par défaut |
 |---|---|---|
-| `VITE_API_MODE` | `mock` : faux backend intégré ; `reel` : backend Django | `mock` |
+| `VITE_API_MODE` | `reel` : backend Django ; `mock` : faux backend intégré | `reel` |
 | `VITE_API_URL` | Adresse de l'API (contient déjà `/api/v1`) | `http://localhost:8000/api/v1` |
 | `VITE_DATE_DEMO` | Date de travail affichée (AAAA-MM-JJ). Doit valoir le réglage `GREENGAS_DATE_TRAVAIL` du backend. | `2026-09-12` en `mock`, le jour même en `reel` |
 | `VITE_RAFRAICHISSEMENT_MS` | Rafraîchissement des tableaux de bord, en millisecondes | `5000` |
@@ -82,8 +82,8 @@ Sur le web, la session est gardée en mémoire : recharger la page déconnecte. 
 
 ## Faux backend et vrai backend
 
-- **`VITE_API_MODE=mock`** : les requêtes sont traitées dans le navigateur par le faux backend de `src/mocks/` (MSW). Il charge `docs/reference/seed.json`, le même fichier que le backend Django, et refait les calculs du Guide commun. Les données sont gardées en mémoire : recharger la page les remet à leur état de départ.
-- **`VITE_API_MODE=reel`** : le même code appelle le backend Django à l'adresse `VITE_API_URL`. Aucun écran ne change.
+- **`VITE_API_MODE=reel`** : les requêtes appellent le backend Django à l'adresse `VITE_API_URL` (par défaut `http://localhost:8000/api/v1`).
+- **`VITE_API_MODE=mock`** : les requêtes sont traitées par le faux backend de `src/mocks/` (MSW). Il charge `docs/reference/seed.json` et garde les données en mémoire.
 
 ---
 
