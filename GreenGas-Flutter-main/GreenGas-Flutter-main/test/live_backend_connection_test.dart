@@ -1,3 +1,6 @@
+// Intégration live : conserver les traces de diagnostic dans la sortie de test.
+// ignore_for_file: avoid_print
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:greengas/core/config.dart';
 import 'package:greengas/data/api_client.dart';
@@ -30,7 +33,8 @@ void main() {
       final bacs = await bacRepo.proches(AppConfig.demoLat, AppConfig.demoLng);
       expect(bacs, isNotEmpty);
       expect(bacs.first.code, startsWith('BAC-'));
-      print('Bacs proches reçus du backend: ${bacs.map((b) => b.code).toList()}');
+      print(
+          'Bacs proches reçus du backend: ${bacs.map((b) => b.code).toList()}');
     });
 
     test('2. Connexion Citoyen Awa (+2250701020304)', () async {
@@ -44,14 +48,17 @@ void main() {
 
       final solde = await pointsRepo.solde();
       expect(solde.solde, isNotNull);
-      print('Solde GreenPoints de ${user.nom}: ${solde.solde} points (gagnés: ${solde.totalGagne}, en attente: ${solde.pointsEnAttente})');
+      print(
+          'Solde GreenPoints de ${user.nom}: ${solde.solde} points (gagnés: ${solde.totalGagne}, en attente: ${solde.pointsEnAttente})');
 
       final recompenses = await pointsRepo.recompenses();
       expect(recompenses, isNotEmpty);
       print('Récompenses disponibles: ${recompenses.length}');
     });
 
-    test('3. Connexion Collecteur Kouadio (+2250700000002) et tournées du 12/09/2026', () async {
+    test(
+        '3. Connexion Collecteur Kouadio (+2250700000002) et tournées du 12/09/2026',
+        () async {
       final user = await auth.login('+2250700000002', AppConfig.demoPassword);
       expect(user.role, Role.collecteur);
       print('Collecteur connecté: ${user.nom}');

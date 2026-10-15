@@ -11,6 +11,12 @@ import type {
   UtilisateurModification,
 } from './types';
 
+/** Le sérialiseur Django renvoie l'identifiant de secteur sous `secteur` (secteur_id est écriture seule). */
+function bacDepuisApi(bac: Bac): Bac {
+  const reponse = bac as Bac & { secteur?: string };
+  return { ...bac, secteur_id: reponse.secteur_id || reponse.secteur || '' };
+}
+
 export const apiUtilisateurs = {
   lister: async (filtres: FiltresUtilisateurs = {}) =>
     resultats<Utilisateur>(
@@ -33,12 +39,15 @@ export const apiBacs = {
   lister: async (filtres: FiltresBacs = {}) =>
     resultats<Bac>(
       await executer(client.GET('/bacs/', { params: { query: { ...filtres, taille_page: TAILLE_PAGE_MAX } } })),
-    ),
-  detail: (id: string) => executer(client.GET('/bacs/{id}/', { params: { path: { id } } })),
+    ).map(bacDepuisApi),
+  detail: async (id: string) => bacDepuisApi(await executer(client.GET('/bacs/{id}/', { params: { path: { id } } }))),
   creer: (corps: BacEcriture) => executer(client.POST('/bacs/', { body: corps })),
   modifier: (id: string, corps: BacEcriture) =>
     executer(client.PATCH('/bacs/{id}/', { params: { path: { id } }, body: corps })),
-  tracabilite: (id: string) => executer(client.GET('/bacs/{id}/tracabilite/', { params: { path: { id } } })),
+  tracabilite: async (id: string) => {
+    const trace = await executer(client.GET('/bacs/{id}/tracabilite/', { params: { path: { id } } }));
+    return { ...trace, bac: bacDepuisApi(trace.bac) };
+  },
 };
 
 export const apiScans = {
