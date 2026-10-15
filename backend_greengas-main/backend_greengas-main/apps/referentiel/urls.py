@@ -21,6 +21,5 @@ urlpatterns = [
 
     # Bacs (/api/v1/bacs/...)
     path('bacs/', BacListCreateView.as_view(), name='bacs_list'),
-    path('bacs/proches/', BacsProchesView.as_view(), name='bacs_proches'),
     path('bacs/<uuid:id>/', BacDetailUpdateView.as_view(), name='bacs_detail'),
 ]

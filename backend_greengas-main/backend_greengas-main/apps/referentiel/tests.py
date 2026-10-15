@@ -101,3 +101,25 @@ class ReferentielEndpointsTestCase(TestCase):
         res_patch = self.client.patch(f"/api/v1/bacs/{bac_id}/", {"nb_foyers_declares": 40}, format='json')
         self.assertEqual(res_patch.status_code, status.HTTP_200_OK)
         self.assertEqual(res_patch.data['nb_foyers_declares'], 40)
+
+    def test_bacs_proches_est_public_et_retourne_la_distance(self):
+        response = self.client.get(
+            "/api/v1/bacs/proches/",
+            {"latitude": "5.345", "longitude": "-4.012"},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['code'], self.bac.code)
+        self.assertEqual(response.data[0]['distance_m'], 0)
+
+    def test_bacs_proches_refuse_les_coordonnees_absentes_ou_invalides(self):
+        for params in (
+            {},
+            {"latitude": "5.345"},
+            {"latitude": "91", "longitude": "-4.012"},
+            {"latitude": "invalid", "longitude": "-4.012"},
+        ):
+            with self.subTest(params=params):
+                response = self.client.get("/api/v1/bacs/proches/", params)
+                self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
