@@ -115,9 +115,11 @@ final plafondScansProvider = FutureProvider.autoDispose<int>((ref) async {
 });
 
 // ---- Données collecteur ----
-/// Date de travail (`DATE_TRAVAIL`) si elle est définie, sinon la date du jour.
+/// Date de travail (`DATE_TRAVAIL`) si elle est définie, sinon la date du seed (2026-09-12) sur le backend réel,
+/// sinon la date du jour en mode mock.
 String todayIso() {
   if (AppConfig.dateTravail.isNotEmpty) return AppConfig.dateTravail;
+  if (!AppConfig.useMock) return '2026-09-12';
   final n = DateTime.now();
   return '${n.year}-${n.month.toString().padLeft(2, '0')}-${n.day.toString().padLeft(2, '0')}';
 }

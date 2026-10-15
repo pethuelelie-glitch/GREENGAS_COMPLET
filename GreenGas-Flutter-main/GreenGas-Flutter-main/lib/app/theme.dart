@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 import 'package:greengas/shared/design/app_colors.dart';
 import 'package:greengas/shared/design/tokens.dart';
