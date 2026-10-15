@@ -28,7 +28,7 @@ from apps.greenpoints.models import GreenPointsTransaction
 from apps.greenpoints.serializers import GreenPointsTransactionSerializer
 from apps.energie.models import ProductionEnergie
 from apps.energie.serializers import ProductionEnergieSerializer
-from apps.comptes.permissions import EstAdmin, EstAdminOuReferent
+from apps.comptes.permissions import EstAdmin, EstAdminOuReferent, EstRoleControlCenter
 from apps.comptes.exceptions import MetierException
 
 
@@ -194,7 +194,7 @@ class ParametreListView(generics.ListAPIView):
     """
     queryset = Parametre.objects.all().order_by('cle')
     serializer_class = ParametreSerializer
-    permission_classes = [EstAdmin]
+    permission_classes = [EstRoleControlCenter]
     pagination_class = None
 
 

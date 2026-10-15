@@ -1103,7 +1103,7 @@ paths:
     get:
       operationId: parametres_lister
       tags: [Supervision]
-      summary: Table des paramètres système (administrateur)
+      summary: Lire les paramètres système (personnel du Control Center)
       responses:
         '401': { $ref: '#/components/responses/NonAuthentifie' }
         '200':

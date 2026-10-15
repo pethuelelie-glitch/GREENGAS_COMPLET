@@ -32,6 +32,24 @@ class EstAdmin(permissions.BasePermission):
         return bool(request.user and request.user.is_authenticated and (request.user.role == Role.ADMINISTRATEUR or request.user.is_superuser))
 
 
+class EstRoleControlCenter(permissions.BasePermission):
+    """Personnel du Control Center pouvant lire les paramètres opérationnels."""
+    def has_permission(self, request, view):
+        return bool(
+            request.user
+            and request.user.is_authenticated
+            and (
+                request.user.is_superuser
+                or request.user.role in (
+                    Role.ADMINISTRATEUR,
+                    Role.OPERATEUR_TRI,
+                    Role.RESPONSABLE_METHANISATION,
+                    Role.REFERENT,
+                )
+            )
+        )
+
+
 class EstCapteur(permissions.BasePermission):
     def has_permission(self, request, view):
         return bool(request.user and request.user.is_authenticated and request.user.role == Role.CAPTEUR)

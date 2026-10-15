@@ -137,6 +137,20 @@ class SupervisionEndpointsTestCase(TestCase):
         res_collecteur = self.client.get("/api/v1/parametres/")
         self.assertEqual(res_collecteur.status_code, status.HTTP_403_FORBIDDEN)
 
+        self.client.force_authenticate(user=self.personnel_attente)
+        res_operateur = self.client.get("/api/v1/parametres/")
+        self.assertEqual(res_operateur.status_code, status.HTTP_200_OK)
+
+        responsable = Utilisateur.objects.create_user(
+            telephone="+2250100000004",
+            nom="Responsable",
+            password="password123",
+            role=Role.RESPONSABLE_METHANISATION,
+        )
+        self.client.force_authenticate(user=responsable)
+        res_responsable = self.client.get("/api/v1/parametres/")
+        self.assertEqual(res_responsable.status_code, status.HTTP_200_OK)
+
     def test_journal_audit_lister(self):
         self.client.force_authenticate(user=self.admin)
         # Créer une entrée d'audit manuelle
