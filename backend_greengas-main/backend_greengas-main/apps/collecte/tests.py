@@ -93,6 +93,28 @@ class CollecteEndpointsTestCase(TestCase):
         self.assertEqual(res.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY)
         self.assertEqual(res.data['code'], "COMPTE_NON_VALIDE")
 
+    def test_operateur_tri_peut_lister_les_tournees_collectees(self):
+        operateur = Utilisateur.objects.create_user(
+            telephone="+2250100000005",
+            nom="Operateur Tri",
+            password="password123",
+            role=Role.OPERATEUR_TRI,
+        )
+        tournee = Tournee.objects.create(
+            code="TRN-TEST-TRI",
+            date=date.today(),
+            secteur=self.secteur,
+            site=self.site_nominal,
+            collecteur=self.collecteur,
+            statut=StatutTournee.COLLECTEE,
+        )
+        self.client.force_authenticate(user=operateur)
+
+        res = self.client.get("/api/v1/tournees/?statut=collectee")
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual([item['code'] for item in res.data['results']], [tournee.code])
+
     def test_scan_valide_et_debounce(self):
         self.client.force_authenticate(user=self.citoyen_valide)
         payload = {

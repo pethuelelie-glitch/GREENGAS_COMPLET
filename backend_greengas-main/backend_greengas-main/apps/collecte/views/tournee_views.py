@@ -45,6 +45,10 @@ class TourneeListCreateView(generics.ListCreateAPIView):
             queryset = Tournee.objects.all()
         elif user.role == Role.COLLECTEUR:
             queryset = Tournee.objects.filter(collecteur=user)
+        elif user.role == Role.OPERATEUR_TRI:
+            queryset = Tournee.objects.filter(
+                statut__in=[StatutTournee.COLLECTEE, StatutTournee.TRIEE]
+            )
         elif user.role == Role.REFERENT and user.bac_id:
             queryset = Tournee.objects.filter(secteur_id=user.bac.secteur_id)
         else:
