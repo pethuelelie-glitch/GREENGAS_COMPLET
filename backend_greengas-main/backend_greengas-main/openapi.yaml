@@ -1114,6 +1114,18 @@ paths:
   /parametres/{cle}/:
     parameters:
       - { name: cle, in: path, required: true, schema: { $ref: '#/components/schemas/CleParametre' } }
+    get:
+      operationId: parametres_lire
+      tags: [Supervision]
+      summary: Lire un paramètre (tout utilisateur authentifié), notamment le plafond de scans mobile
+      responses:
+        '200':
+          description: Paramètre demandé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Parametre' }
+        '401': { $ref: '#/components/responses/NonAuthentifie' }
+        '404': { $ref: '#/components/responses/Introuvable' }
     patch:
       operationId: parametres_modifier
       tags: [Supervision]
@@ -1436,6 +1448,7 @@ components:
       properties:
         nom: { type: string, example: Awa Koné }
         telephone: { $ref: '#/components/schemas/Telephone' }
+        email: { type: string, format: email, nullable: true, example: awa.kone@greengas.ci }
         mot_de_passe: { type: string, format: password, minLength: 8, example: greengas2026 }
         code_bac: { type: string, example: BAC-014 }
     InscriptionPersonnelRequete:

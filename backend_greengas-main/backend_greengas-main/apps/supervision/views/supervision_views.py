@@ -206,6 +206,16 @@ class ParametreDetailUpdateView(APIView):
     """
     permission_classes = [EstAdmin]
 
+    def get_permissions(self):
+        # L'application mobile doit lire le plafond de scans sans pouvoir modifier les réglages.
+        if self.request.method == 'GET':
+            return [IsAuthenticated()]
+        return [EstAdmin()]
+
+    def get(self, request, cle):
+        parametre = get_object_or_404(Parametre, cle=cle)
+        return Response(ParametreSerializer(parametre).data, status=status.HTTP_200_OK)
+
     @transaction.atomic
     def patch(self, request, cle):
         parametre = get_object_or_404(Parametre.objects.select_for_update(), cle=cle)

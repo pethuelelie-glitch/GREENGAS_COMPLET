@@ -88,11 +88,11 @@ class SupervisionEndpointsTestCase(TestCase):
 
         # Paramètre de test
         self.param = Parametre.objects.create(
-            cle="coefficient_filiere_organique",
-            valeur=Decimal('10.0000'),
-            unite="pts/kg",
+            cle="max_scans_par_jour",
+            valeur=Decimal('2.0000'),
+            unite="scans/jour",
             statut="nominal",
-            description="Coefficient de valorisation filière organique",
+            description="Plafond quotidien de scans citoyens",
             source="contrat"
         )
 
@@ -136,6 +136,25 @@ class SupervisionEndpointsTestCase(TestCase):
         self.client.force_authenticate(user=self.collecteur)
         res_collecteur = self.client.get("/api/v1/parametres/")
         self.assertEqual(res_collecteur.status_code, status.HTTP_403_FORBIDDEN)
+
+        citoyen = Utilisateur.objects.create_user(
+            telephone="+2250100000005",
+            nom="Citoyen",
+            password="password123",
+            role=Role.CITOYEN,
+        )
+        self.client.force_authenticate(user=citoyen)
+        res_parametre_mobile = self.client.get(
+            f"/api/v1/parametres/{self.param.cle}/"
+        )
+        self.assertEqual(res_parametre_mobile.status_code, status.HTTP_200_OK)
+        self.assertEqual(float(res_parametre_mobile.data['valeur']), 12.5)
+        res_patch_citoyen = self.client.patch(
+            f"/api/v1/parametres/{self.param.cle}/",
+            {"valeur": 4},
+            format='json',
+        )
+        self.assertEqual(res_patch_citoyen.status_code, status.HTTP_403_FORBIDDEN)
 
         self.client.force_authenticate(user=self.personnel_attente)
         res_operateur = self.client.get("/api/v1/parametres/")

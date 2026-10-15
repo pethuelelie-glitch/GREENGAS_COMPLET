@@ -101,6 +101,7 @@ class ComptesEndpointsTestCase(TestCase):
         """
         payload = {
             "telephone": "+2250700000001",
+            "email": "Jean.Kouassi@GreenGas.ci",
             "nom": "Kouassi Jean",
             "mot_de_passe": "Password123!",
             "code_bac": "BAC-014"
@@ -113,6 +114,11 @@ class ComptesEndpointsTestCase(TestCase):
         self.assertEqual(res.data['utilisateur']['statut_validation'], "valide")
         self.assertEqual(res.data['utilisateur']['profil_citoyen']['telephone_verifie'], True)
         self.assertEqual(res.data['utilisateur']['role'], "citoyen")
+        self.assertEqual(res.data['utilisateur']['email'], "jean.kouassi@greengas.ci")
+        self.assertEqual(
+            Utilisateur.objects.get(telephone="+2250700000001").email,
+            "jean.kouassi@greengas.ci",
+        )
 
     def test_otp_est_aleatoire_et_limite_les_tentatives(self):
         telephone = "+2250700000099"

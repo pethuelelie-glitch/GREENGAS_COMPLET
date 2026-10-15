@@ -134,6 +134,7 @@ class InscriptionCitoyenSerializer(serializers.Serializer):
     """
     nom = serializers.CharField(max_length=150, required=True)
     telephone = serializers.CharField(max_length=20, required=True)
+    email = serializers.EmailField(required=False, allow_blank=True, allow_null=True)
     mot_de_passe = serializers.CharField(min_length=8, write_only=True, required=True)
     code_bac = serializers.CharField(max_length=20, required=True)
 
@@ -154,10 +155,21 @@ class InscriptionCitoyenSerializer(serializers.Serializer):
             from rest_framework.exceptions import NotFound
             raise NotFound(detail=f"Le bac avec le code '{value}' est introuvable.", code="INTROUVABLE")
 
+    def validate_email(self, value):
+        if value is None or not value.strip():
+            return None
+        email_clean = value.strip().lower()
+        if Utilisateur.objects.filter(email__iexact=email_clean).exists():
+            raise EmailDejaUtiliseeException(
+                details={"email": ["Cette adresse e-mail est déjà utilisée."]}
+            )
+        return email_clean
+
     def create(self, validated_data):
         bac = validated_data['code_bac']
         utilisateur = Utilisateur.objects.create_user(
             telephone=validated_data['telephone'],
+            email=validated_data.get('email'),
             nom=validated_data['nom'],
             password=validated_data['mot_de_passe'],
             role=Role.CITOYEN,
